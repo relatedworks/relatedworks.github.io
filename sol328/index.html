@@ -1,0 +1,140 @@
+<html>
+<head>
+    <title>Sol Lewitt #328 / Permutations</title>
+    <script type="text/javascript" src="http://cdnjs.cloudflare.com/ajax/libs/paper.js/0.9.18/paper-full.min.js"></script>
+    <style type="text/css">
+        html,
+        body {
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            padding: 0;
+            margin: 0;
+            background: #141414;
+        }
+    </style>
+</head>
+<body>
+    <script canvas='sol-lewitt-328' type='text/paperscript'>
+        /*
+        Wall Drawing #328 (1980)
+        
+        On a black wall, a white circle within which are white vertical parallel lines, 
+        and a white parallelogram within which are white horizontal parallel lines. 
+        The vertical lines within the circle do not enter the parallelogram, 
+        and the horizontal lines within the parallelogram do not enter the circle.
+        */
+
+         // Globals
+        var lineWidth = 1;
+        var lineSpacing = 10;
+        var lineColor = '#f8f8f8';
+        var pgramSlant = -35;
+        // var pgramSlant = Math.floor(Math.random() * 35) + 25;
+
+        function init() {
+
+            var width = view.viewSize.width;
+            var height = view.viewSize.height;
+
+            // repetitions
+            var pgramSlant = Math.floor(Math.random() * -100) + 50;
+            var lineSpacing = Math.floor(Math.random() * 100) + 1;
+            var lineColor = '#f8f8f8';
+            var lineWidth = Math.floor(Math.random() * 100) + 1;
+
+            // text
+            var textA = new PointText({
+                point: [5, 10],
+                content: 'slant:   ' + pgramSlant,
+                fillColor: '#f8f8f8',
+                fontFamily: 'Courier New',
+                fontWeight: 'normal',
+                fontSize: 10,
+            });
+            var textB = new PointText({
+                point: [5, 20],
+                content: 'spacing: ' + lineSpacing,
+                fillColor: '#f8f8f8',
+                fontFamily: 'Courier New',
+                fontWeight: 'normal',
+                fontSize: 10,
+            });
+            var textC = new PointText({
+                point: [5, 30],
+                content: 'width:   ' + lineWidth,
+                fillColor: '#f8f8f8',
+                fontFamily: 'Courier New',
+                fontWeight: 'normal',
+                fontSize: 10,
+            });
+
+            // Create vertical lines
+            var vlines = new Group();
+            for (var i = 0; i * (lineWidth + lineSpacing) < width; i++) {
+                var line = new Path({
+                    segments: [[(i * (lineWidth + lineSpacing)), 0], [(i * (lineWidth + lineSpacing)), height]],
+                    strokeColor: lineColor,
+                    strokeWidth: lineWidth
+                });
+                vlines.addChild(line);
+            }
+
+            // Create horizontal lines
+            var hLines = vlines.clone().rotate(90);
+
+            // Create the parallelogram
+            var pgram = new Path.Rectangle(new Rectangle({
+                x: (width / 2) - (height / 6),
+                y: (height / 3),
+                width: height / 3,
+                height: height / 3
+            }));
+            // pgram.skew(new Point(pgramSlant, 0));
+            // pgram.skew(new Point(Math.floor(Math.random() * -45) + 45, 0));
+            pgram.skew(new Point(pgramSlant, 0));
+
+            // Create the circle
+            var circle = new CompoundPath({
+                children: [new Path.Circle({
+                        center: view.center,
+                        radius: (height / 2) * .9
+                    }),
+                                pgram.clone()
+                        ],
+            });
+
+            // Create shape outlines
+            var outline = circle.clone();
+            outline.strokeColor = lineColor;
+            outline.strokeWidth = lineWidth;
+
+            // Masking
+            var circleGroup = new Group(circle, vlines);
+            circleGroup.clipped = true;
+            var pgramGroup = new Group(pgram, hLines);
+            pgramGroup.clipped = true;
+
+            // Draw!
+            view.draw();
+        }
+
+        function onResize() {
+            project.activeLayer.removeChildren();
+            init();
+        }
+
+         // This will fire when Paper.js is ready
+         init();
+    </script>
+
+    <canvas id='sol-lewitt-328' resize>
+        <!-- Paperscript will draw the graphics here -->
+    </canvas>
+</body>
+<script>
+    setTimeout(() => {
+  document.location.reload();
+}, 1500);
+</script>
+</html>
